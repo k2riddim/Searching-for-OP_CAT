@@ -127,7 +127,7 @@ The first transaction hash with OP_DUP is: 6f7cf9580f1c2dfb3c4d5d043cdbb128c640e
 # To do :
 - [x] Finish indexing the bitcoin node
 - [x] Query public bitcoin blockchain from BigQuery
-- [x] Parse the results
+- [x] Parse the results searching for the first OP_CAT transaction
 - [ ] Write a script that access directly the data of the local bitcoin node
 - [ ] Run the script and share it and the results on this github
 - [ ] Answer the question "Was OP_CAT really alive on mainnet once ?"

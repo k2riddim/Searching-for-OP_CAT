@@ -2,8 +2,8 @@
 This repository is relating my work to search for the first OP_CAT transaction on the bitcoin blockchain main network
 
 ## Run a bitcoin node
-I already hade a node ready but it wasn't running since a few weeks, so reindexing it takes some time so.... 
-During that time I searched through the google BigQuery public instance of the bitcoin blockchain, I used this query to get a first glimpse at the dataset (Since OP_CAT is deactivated, I searched for the hexcode which is "7e" ) 
+I already had a node ready but it wasn't running since a few weeks, reindexing takes some time so.... 
+During that time I searched through the google BigQuery public instance of the bitcoin blockchain, I used a query, to get a first glimpse at the dataset (Since OP_CAT is deactivated, I searched for the hexcode which is "7e" ) 
 
 ## First try
 The query :
@@ -39,7 +39,7 @@ ORDER BY
 ### Export result to JSON
 
 ### Run a script
-This script parse the json find in order to find the first OP_CAT and the first OP_DUP transaction of the dataset
+This script parse the json find in order to find the first OP_CAT and the first OP_DUP (for validation of the parsing algorithm) transaction of the dataset
 
 ```
 import json
@@ -119,7 +119,11 @@ if first_op_dup_tx:
 else:
     print("No transaction with OP_DUP found.")
 ```
-
+And the results :
+```
+No transaction with OP_CAT found.
+The first transaction hash with OP_DUP is: 6f7cf9580f1c2dfb3c4d5d043cdbb128c640e3f20161245aa7372e9666168516
+```
 # Left to do :
 - [x] Finish indexing the bitcoin node
 - [ ] Write the script that access directly the data of the local bitcoin node

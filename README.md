@@ -128,6 +128,7 @@ The first transaction hash with OP_DUP is: 6f7cf9580f1c2dfb3c4d5d043cdbb128c640e
 # Now let's the real deal begin
 ## Run bitcoin node
 ## Python script to find OP_CAT :
+Just to be 100% sure, the script search for OP_CAT and OP_DUP, and inside the output and the input.
 ```
 from datetime import datetime
 from blockchain_parser.blockchain import Blockchain

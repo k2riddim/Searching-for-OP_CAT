@@ -124,10 +124,125 @@ And the results :
 No transaction with OP_CAT found.
 The first transaction hash with OP_DUP is: 6f7cf9580f1c2dfb3c4d5d043cdbb128c640e3f20161245aa7372e9666168516
 ```
+
+# Now let's the real deal begin
+## Run bitcoin node
+## Python script to find OP_CAT :
+```
+from datetime import datetime
+from blockchain_parser.blockchain import Blockchain
+from bitcoinlib.scripts import Script
+import binascii
+import os
+
+# Path to the Bitcoin Core blockchain data
+blockchain_directory = '/mnt/d/Bitcoin/data/blocks'
+
+# Create a Blockchain object
+blockchain = Blockchain(blockchain_directory)
+
+ 
+def contains_opcode(script, opcode):
+    try:
+        # Convert the script to its byte representation
+        script = Script.parse_hex(script_hex)
+        # Check if the opcode is present in the script bytes
+        
+        return opcode in script.commands
+    except Exception as e:
+        print(f"Error parsing script: {e}")
+        return False
+
+# Define the end date for parsing as January 1st, 2011 because OP_CAT was deprecated before this date
+end_date = datetime(2011, 1, 1)
+
+# Define opcodes
+OP_CAT = 126  # 0x7e
+OP_DUP = 118  # 0x76
+
+# Initialize counters
+transactions_output_with_op_cat = 0
+transactions_output_with_op_dup = 0
+
+# Initialize counters
+transactions_input_with_op_cat = 0
+transactions_input_with_op_dup = 0
+
+# Loop through the ordered blocks up to the end_date
+for block in blockchain.get_ordered_blocks(os.path.join(blockchain_directory, 'index'), cache='index-cache.pickle'):
+    block_datetime = block.header.timestamp  
+    if block_datetime >= end_date:
+        break  # Stop processing if the block date is beyond the end date
+
+    for tx in block.transactions:
+        for no, output in enumerate(tx.outputs):
+            try:
+              # Parse the script
+                script_hex = output.script.hex
+                if isinstance(script_hex, bytes):
+                    script_hex = binascii.hexlify(script_hex).decode()
+                    script = Script.parse_hex(script_hex)
+                if contains_opcode(script, OP_DUP):
+                    print("Found OP_DUP in transaction {} output {}.".format(tx.hash, no))
+                    transactions_output_with_op_dup += 1
+                if contains_opcode(script, OP_CAT):
+                    print("Found OP_CAT in transaction {} output {}.".format(tx.hash, no))
+                    transactions_output_with_op_cat += 1
+            except Exception as e:
+                print(f"Error parsing script for transaction {tx.hash}: {e}")
+    
+    for tx in block.transactions:
+        if tx.is_coinbase():
+            continue    
+        else:
+            for no, input in enumerate(tx.inputs):
+                try:
+                # Parse the script
+                    script_hex = input.script.hex
+                    if isinstance(script_hex, bytes):
+                        script_hex = binascii.hexlify(script_hex).decode()
+                        script = Script.parse_hex(script_hex)
+                    if contains_opcode(script, OP_DUP):
+                        print("Found OP_DUP in transaction {} input {}.".format(tx.hash, no))
+                        transactions_input_with_op_dup += 1
+                    if contains_opcode(script, OP_CAT):
+                        print("Found OP_CAT in transaction {} input {}.".format(tx.hash, no))
+                        transactions_input_with_op_cat += 1
+                except Exception as e:
+                    print(f"Error parsing script for transaction {tx.hash}: {e}")
+
+# Print summary
+if transactions_output_with_op_cat == 0:
+    print("No transactions output with OP_CAT found before {}.".format(end_date.strftime('%Y-%m-%d %H:%M:%S')))
+else:
+    print(f"{transactions_output_with_op_cat} transactions with OP_CAT found before {end_date.strftime('%Y-%m-%d %H:%M:%S')}")
+if transactions_output_with_op_dup == 0:
+    print("No transactions output with OP_DUP found before {}.".format(end_date.strftime('%Y-%m-%d %H:%M:%S')))
+else:
+    print(f"{transactions_output_with_op_dup} transactions with OP_DUP found before {end_date.strftime('%Y-%m-%d %H:%M:%S')}")
+if transactions_input_with_op_cat == 0:
+    print("No transactions input with OP_CAT found before {}.".format(end_date.strftime('%Y-%m-%d %H:%M:%S')))
+else:
+    print(f"{transactions_input_with_op_cat} transactions with OP_CAT found before {end_date.strftime('%Y-%m-%d %H:%M:%S')}")
+if transactions_input_with_op_dup == 0:
+    print("No transactions input with OP_DUP found before {}.".format(end_date.strftime('%Y-%m-%d %H:%M:%S')))
+else:
+    print(f"{transactions_input_with_op_dup} transactions with OP_DUP found before {end_date.strftime('%Y-%m-%d %H:%M:%S')}")
+```
+## Result
+```
+No transactions output with OP_CAT found before 2011-01-01 00:00:00.
+163550 transactions with OP_DUP found before 2011-01-01 00:00:00
+No transactions input with OP_CAT found before 2011-01-01 00:00:00.
+No transactions input with OP_DUP found before 2011-01-01 00:00:00.
+```
+
+# Conclusion :
+CAT WAS NEVER ALIVE ! #teamded
 # To do :
 - [x] Finish indexing the bitcoin node
 - [x] Query public bitcoin blockchain from BigQuery
 - [x] Parse the results searching for the first OP_CAT transaction
-- [ ] Write a script that access directly the data of the local bitcoin node
-- [ ] Run the script and share it and the results on this github
-- [ ] Answer the question "Was OP_CAT really alive on mainnet once ?"
+- [x] Write a script that access directly the data of the local bitcoin node
+- [x] Run the script and share it and the results on this github
+- [x] Answer the question "Was OP_CAT really alive on mainnet once ?"

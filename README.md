@@ -154,7 +154,7 @@ def contains_opcode(script, opcode):
         print(f"Error parsing script: {e}")
         return False
 
-# Define the end date for parsing as January 1st, 2011 because OP_CAT was deprecated before this date
+# Define the end date for parsing as January 1st, 2011 because OP_CAT was deactivated after this date
 end_date = datetime(2011, 1, 1)
 
 # Define opcodes
